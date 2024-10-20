@@ -473,7 +473,7 @@ GameObject:
   - component: {fileID: 375979126}
   - component: {fileID: 375979125}
   m_Layer: 5
-  m_Name: Image
+  m_Name: TimerImage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -735,6 +735,8 @@ MonoBehaviour:
   timeToComplete: 5
   timeToReveal: 10
   isAnswering: 0
+  loadNextQ: 0
+  fillFraction: 0
 --- !u!4 &633268387
 Transform:
   m_ObjectHideFlags: 0
