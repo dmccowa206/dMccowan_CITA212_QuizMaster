@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using UnityEngine.SocialPlatforms.Impl;
 
 public class Quiz_scr : MonoBehaviour
 {
     [Header("Questions")]
-    [SerializeField] QuestionSO question;
+    QuestionSO currentQuestion;
     [SerializeField] TextMeshProUGUI questionText;
+    [SerializeField] List<QuestionSO> questions = new List<QuestionSO>();
     [Header("Answers")]
     [SerializeField] GameObject[] answerButtons;
     int correctAnswerIndex;
@@ -19,11 +21,14 @@ public class Quiz_scr : MonoBehaviour
     [Header("Timer")]
     [SerializeField] Image timerImage;
     Timer_scr timer;
+    [Header("Scoring")]
+    [SerializeField] TextMeshProUGUI scoreText;
+    ScoreKeeper_scr scoreKeeper;
 
     void Start()
     {
-        GetNextQuestion();
         timer = FindObjectOfType<Timer_scr>();
+        scoreKeeper = FindAnyObjectByType<ScoreKeeper_scr>();
     }
     void Update()
     {
@@ -46,20 +51,22 @@ public class Quiz_scr : MonoBehaviour
         DisplayAnswer(index);
         SetButtonState(false);
         timer.CancelTimer();
+        scoreText.text = "Score: " + scoreKeeper.CalculateScore() + "%";
     }
     void DisplayAnswer(int index)
     {
         Image buttonImage;
-        if (index == question.GetCorrectIndex())
+        if (index == currentQuestion.GetCorrectIndex())
         {
             questionText.text = "Correct!";
             buttonImage = answerButtons[index].GetComponent<Image>();
             buttonImage.sprite = correctAnswerSprite;
+            scoreKeeper.IncrementCorrectAnswers();
         }
         else
         {
-            correctAnswerIndex = question.GetCorrectIndex();
-            string correctAnswer = question.GetAnswer(correctAnswerIndex);
+            correctAnswerIndex = currentQuestion.GetCorrectIndex();
+            string correctAnswer = currentQuestion.GetAnswer(correctAnswerIndex);
             questionText.text = "Sorry, the correct answer was\n" + correctAnswer;
             buttonImage = answerButtons[correctAnswerIndex].GetComponent<Image>();
             buttonImage.sprite = correctAnswerSprite;
@@ -67,17 +74,22 @@ public class Quiz_scr : MonoBehaviour
     }
     private void GetNextQuestion()
     {
-        SetButtonState(true);
-        SetDefaultButtonSprites();
-        DisplayQuestion();
+        if (questions.Count > 0)
+        {
+            SetButtonState(true);
+            SetDefaultButtonSprites();
+            GetRandomQuestion();
+            DisplayQuestion();
+            scoreKeeper.IncrementQuestionsSeen();
+        }
     }
     private void DisplayQuestion()
     {
-        questionText.text = question.GetQuestion();
+        questionText.text = currentQuestion.GetQuestion();
         for(int i = 0; i < answerButtons.Length; i++)
         {
             TextMeshProUGUI buttonText = answerButtons[i].GetComponentInChildren<TextMeshProUGUI>();
-            buttonText.text = question.GetAnswer(i);
+            buttonText.text = currentQuestion.GetAnswer(i);
         }
     }
     private void SetButtonState(bool state)
@@ -96,4 +108,14 @@ public class Quiz_scr : MonoBehaviour
             buttonImage.sprite = defaultAnswerSprite;
         }
     }
+    void GetRandomQuestion()
+    {
+        int index = Random.Range(0,questions.Count);
+        currentQuestion = questions[index];
+        if (questions.Contains(currentQuestion))
+        {
+            questions.Remove(currentQuestion);
+        }
+    }
+
 }
