@@ -44,7 +44,7 @@ public class Timer_scr : MonoBehaviour
                 loadNextQ = true;
             }
         }
-        Debug.Log(isAnswering + ": " + timerVal + ": " + fillFraction);
+        // Debug.Log(isAnswering + ": " + timerVal + ": " + fillFraction);
     }
     public void CancelTimer()
     {

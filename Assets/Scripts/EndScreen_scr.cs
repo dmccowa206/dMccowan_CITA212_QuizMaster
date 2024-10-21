@@ -7,7 +7,7 @@ public class EndScreen_scr : MonoBehaviour
 {
     [SerializeField] TextMeshProUGUI finalScoreText;
     ScoreKeeper_scr scoreKeep;
-    void Start()
+    void Awake()
     {
         scoreKeep = FindAnyObjectByType<ScoreKeeper_scr>();        
     }
