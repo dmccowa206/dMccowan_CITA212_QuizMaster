@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
-using UnityEngine.SocialPlatforms.Impl;
 
 public class Quiz_scr : MonoBehaviour
 {
@@ -27,6 +26,9 @@ public class Quiz_scr : MonoBehaviour
     [Header("ProgressBar")]
     [SerializeField] Slider progressBar;
     public bool isFinish;
+    private string[] congrats;
+    private string[] fails;
+
 
     void Awake()
     {
@@ -34,6 +36,8 @@ public class Quiz_scr : MonoBehaviour
         scoreKeeper = FindAnyObjectByType<ScoreKeeper_scr>();
         progressBar.maxValue = questions.Count;
         progressBar.value = 0;
+        congrats = new string[]{"Good Job!", "Correct!", "Nice Work!", "You got it!"};
+        fails = new string[]{"Sorry", "Too Bad", "Unfortunately"};
     }
     void Update()
     {
@@ -68,7 +72,7 @@ public class Quiz_scr : MonoBehaviour
         Image buttonImage;
         if (index == currentQuestion.GetCorrectIndex())
         {
-            questionText.text = "Correct!";
+            questionText.text = congrats[Random.Range(0, congrats.Length)];
             buttonImage = answerButtons[index].GetComponent<Image>();
             buttonImage.sprite = correctAnswerSprite;
             scoreKeeper.IncrementCorrectAnswers();
@@ -77,7 +81,7 @@ public class Quiz_scr : MonoBehaviour
         {
             correctAnswerIndex = currentQuestion.GetCorrectIndex();
             string correctAnswer = currentQuestion.GetAnswer(correctAnswerIndex);
-            questionText.text = "Sorry, the correct answer was\n" + correctAnswer;
+            questionText.text = fails[Random.Range(0, fails.Length)] + ", the correct answer was\n" + correctAnswer;
             buttonImage = answerButtons[correctAnswerIndex].GetComponent<Image>();
             buttonImage.sprite = correctAnswerSprite;
         }
